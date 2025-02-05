@@ -8,6 +8,13 @@ function App() {
     const [location, setLocation] = useState(null)
     const [locationList, setLocationList] = useState([])
 
+    const addressStringify = address => {
+        return [
+            address.address_line1,
+            address.city + ', ' + address.state,
+        ]
+    }
+
     const onFileChange = (event) => {
         setSelectedFile(event.target.files[0])
     }
@@ -33,7 +40,9 @@ function App() {
             const address = uploadedData.address
             setLocation({
                 latitude: address.latitude,
-                longitude: address.longitude
+                longitude: address.longitude,
+                title: address.common_place_name,
+                text: addressStringify(address)
             })
 
         }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
-import { MapContainer, TileLayer, useMap, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import PropTypes from 'prop-types'
+import LabeledMarker from "./LabeledMarker.jsx"
 
 export default function Map(props) {
     const initialStartingLoc = [41.8781, -87.6298]
@@ -17,13 +18,18 @@ export default function Map(props) {
     const Recenter = ({lat, long}) => {
         const map = useMap()
         useEffect(() => {
-            map.setView([lat, long])
+            map.setView([lat, long], 13)
         }, [lat, long]);
     }
 
     const createMarkers = (locationList) => {
         if (locationList) {
-            return locationList.map((loc, idx) => <Marker key={idx} position={[loc.latitude, loc.longitude]}/>)
+            return( locationList.map((loc, idx) => <LabeledMarker
+                key={idx}
+                position={[loc.latitude, loc.longitude]}
+                title={loc.title}
+                textLines={loc.text}
+            />))
         }
     }
 
@@ -35,11 +41,6 @@ export default function Map(props) {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {/*<Marker position={startingLoc}>*/}
-                {/*    <Popup>*/}
-                {/*        This is a popup*/}
-                {/*    </Popup>*/}
-                {/*</Marker>*/}
                 {createMarkers(props.locationList)}
             </MapContainer>
         </>
