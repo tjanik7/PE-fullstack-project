@@ -1,6 +1,7 @@
 import './App.css'
 import { useEffect, useState } from 'react';
 import Map from "./components/Map.jsx"
+import apparatusToEvent from "./Apparatus.jsx"
 
 function App() {
     const [selectedFile, setSelectedFile] = useState(null)
@@ -31,9 +32,15 @@ function App() {
 
     useEffect(() => {
         if (location) {
-            setLocationList([location])
+            const apparatusEvents = []
+            for (const apparatus of uploadedData.apparatus) {
+                apparatusToEvent(apparatus, apparatusEvents)
+            }
+            apparatusEvents.push(location)
+
+            setLocationList(apparatusEvents)
         }
-    }, [location]);
+    }, [location, uploadedData]);
 
     useEffect(() => {
         if (uploadedData?.address?.latitude && uploadedData?.address?.longitude) {
@@ -44,7 +51,6 @@ function App() {
                 title: address.common_place_name,
                 text: addressStringify(address)
             })
-
         }
     }, [uploadedData]);
 
