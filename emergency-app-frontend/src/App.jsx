@@ -16,6 +16,18 @@ function App() {
     const [fetchingWeatherData, setFetchingWeatherData] = useState(null)
     const [eventDatetime, setEventDatetime] = useState(null)
 
+    const calcAverageTemp = (weatherArray) => {
+        let sum = 0
+        let cnt = 0
+        for (const weatherItem of weatherArray) {
+            if (weatherItem.temp != null) {
+                cnt += 1
+                sum += weatherItem.temp
+            }
+        }
+        return sum / cnt
+    }
+
     const onFileChange = (event) => {
         setSelectedFile(event.target.files[0])
     }
@@ -84,9 +96,16 @@ function App() {
             return <div>Loading weather data...</div>
         }
 
+        const averageTemp = calcAverageTemp(weatherData)
+
         // Render weather data since we know it has been fetched successfully
         return (
-            <WeatherReport date={eventDatetime.toDateString()} time={eventDatetime.toTimeString()} temperature={weatherData[uploadedData.description.hour_of_day].temp}/>
+            <WeatherReport
+                date={eventDatetime.toDateString()}
+                time={eventDatetime.toTimeString()}
+                temperature={weatherData[uploadedData.description.hour_of_day].temp}
+                averageTemperature={averageTemp}
+            />
         )
     }
 
