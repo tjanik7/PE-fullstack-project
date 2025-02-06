@@ -2,6 +2,14 @@ Background
 ==========
 Enrich 911 emergency incident data to provide better analytics for a fire department.
 
+Installation instructions
+---
+```
+cd emergency-app-frontend
+npm install
+npm run dev
+```
+
 Task
 ----
 Given an incident data, enrich it and then display the location and data on a map for easy validation. Try to utilize best practices where possible given available time. 
