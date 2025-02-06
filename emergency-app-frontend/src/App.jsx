@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Map from "./components/Map.jsx"
 import apparatusToEvent from "./Apparatus.jsx"
 import { getNearbyStation, getWeather } from "./apiRequests.js"
+import WeatherReport from "./components/WeatherReport.jsx"
 
 function App() {
     const [selectedFile, setSelectedFile] = useState(null)
@@ -10,6 +11,8 @@ function App() {
     const [location, setLocation] = useState(null)
     const [locationList, setLocationList] = useState([])
     const [stationId, setStationId] = useState(null)
+    const [weatherData, setWeatherData] = useState(null)
+    const [eventDatetime, setEventDatetime] = useState(null)
 
     const addressStringify = address => {
         return [
@@ -36,8 +39,10 @@ function App() {
         if (stationId && uploadedData?.description?.event_opened) {
             const eventOpened = uploadedData.description.event_opened
             const eventOpenedDate = eventOpened.slice(0, 10)
-            console.log(eventOpenedDate)
-            getWeather(stationId, eventOpenedDate, eventOpenedDate)
+
+            setEventDatetime(new Date(eventOpened))
+
+            getWeather(stationId, eventOpenedDate, uploadedData.description.hour_of_day, setWeatherData)
         }
     }, [stationId, uploadedData]);
 
@@ -79,7 +84,8 @@ function App() {
             <div>
                 <input type={"file"} onChange={onFileChange}/>
             </div>
-            <Map locationList={locationList} />
+            <Map locationList={locationList}/>
+            {weatherData ? <WeatherReport date={eventDatetime.toDateString()} time={eventDatetime.toTimeString()} temperature={weatherData.temp}/> : <div>Loading weather data...</div>}
         </>
     )
 }
