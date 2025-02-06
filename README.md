@@ -2,13 +2,14 @@ Background
 ==========
 Enrich 911 emergency incident data to provide better analytics for a fire department.
 
-Installation instructions
+Installation/run instructions
 ---
+(Assumes docker & docker compose are installed)
 ```
 cd emergency-app-frontend
-npm install
-npm run dev
+docker compose up --build
 ```
+The application should then be running on localhost:5173
 
 Task
 ----
