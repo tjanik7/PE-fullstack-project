@@ -11,6 +11,17 @@ docker compose up --build
 ```
 The application should then be running on localhost:5173
 
+What improvements would I make given double the time?
+---
+* Better error checking for missing fields or errors in form data
+* The ability to analyze multiple incident files at once; each file could potentially use a different color marker on the map
+* Display more comprehensive weather data and potentially use a different weather service since MeteoStat sometimes returns sparse data
+* Implement lightweight back end system to save incidents for immediate retrieval and to make third-party API requests (I understand in a production product you would not typically want third-party API calls happening on the frontend)
+
+How much time did I spend working on this project?
+---
+I spent somewhere in the window of 6-8 hours working on this project. Being a more backend focused developer in the past, there were a few concepts I need to re-familiarize myself with (such as how to optimally handle state being updated asynchronously).
+
 Task
 ----
 Given an incident data, enrich it and then display the location and data on a map for easy validation. Try to utilize best practices where possible given available time. 
