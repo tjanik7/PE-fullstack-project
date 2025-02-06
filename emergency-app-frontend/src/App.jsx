@@ -2,12 +2,14 @@ import './App.css'
 import { useEffect, useState } from 'react';
 import Map from "./components/Map.jsx"
 import apparatusToEvent from "./Apparatus.jsx"
+import { getNearbyStation, getWeather } from "./apiRequests.js"
 
 function App() {
     const [selectedFile, setSelectedFile] = useState(null)
     const [uploadedData, setUploadedData] = useState(null)
     const [location, setLocation] = useState(null)
     const [locationList, setLocationList] = useState([])
+    const [stationId, setStationId] = useState(null)
 
     const addressStringify = address => {
         return [
@@ -31,6 +33,15 @@ function App() {
     }
 
     useEffect(() => {
+        if (stationId && uploadedData?.description?.event_opened) {
+            const eventOpened = uploadedData.description.event_opened
+            const eventOpenedDate = eventOpened.slice(0, 10)
+            console.log(eventOpenedDate)
+            getWeather(stationId, eventOpenedDate, eventOpenedDate)
+        }
+    }, [stationId, uploadedData]);
+
+    useEffect(() => {
         if (location) {
             const apparatusEvents = []
             for (const apparatus of uploadedData.apparatus) {
@@ -51,6 +62,7 @@ function App() {
                 title: address.common_place_name,
                 text: addressStringify(address)
             })
+            getNearbyStation(address.latitude, address.longitude, setStationId)
         }
     }, [uploadedData]);
 
