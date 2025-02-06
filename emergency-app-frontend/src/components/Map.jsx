@@ -15,6 +15,7 @@ export default function Map(props) {
         }
     }, [locationList]);
 
+    // Automatically re-centers map based on list of locations provided (uses first lat/long pair in list)
     const Recenter = ({lat, long}) => {
         const map = useMap()
         useEffect(() => {

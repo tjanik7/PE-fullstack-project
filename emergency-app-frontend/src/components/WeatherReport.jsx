@@ -2,6 +2,9 @@ import React from "react"
 import PropTypes from "prop-types"
 import './EventSummary.css'
 
+
+// Given more time, I would try and find the nearest non-null weather data to the incident time.
+// I was surprised the historical weather data is as sparse as it is. Compromised with calculating daily average temp.
 export default function WeatherReport(props) {
     return (
         <div className={'summary-container'}>
