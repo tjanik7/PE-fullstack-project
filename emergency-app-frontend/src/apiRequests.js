@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const rapidApiKey = 'd9466f9e5amsh0d46ae26ef950b6p148717jsn19f2aa03f062'
 
-export async function getWeather(stationId, startDate, hourOfDay, setWeatherData) {
+export async function getWeather(stationId, startDate, setWeatherData, setFetchingWeatherData) {
     try {
         const response = await axios.get('https://meteostat.p.rapidapi.com/stations/hourly', {
             params: {
@@ -15,14 +15,16 @@ export async function getWeather(stationId, startDate, hourOfDay, setWeatherData
                 'x-rapidapi-key': rapidApiKey
             }
         })
-        setWeatherData(response.data.data[hourOfDay])
+        setWeatherData(response.data.data)
+        setFetchingWeatherData(false)
     } catch (error) {
         console.error(error)
     }
 }
 
-export async function getNearbyStation(lat, long, setStationId) {
+export async function getNearbyStation(lat, long, setStationId, setFetchingWeatherData) {
     try {
+        setFetchingWeatherData(true)
         const response = await axios.get('https://meteostat.p.rapidapi.com/stations/nearby', {
             params: {
                 lat: lat,
