@@ -1,4 +1,4 @@
-export default function apparatusToEvent(apparatus, apparatusEvents) {
+export function apparatusToEvent(apparatus, apparatusEvents) {
 
     for (const [status, statusData] of Object.entries(apparatus.unit_status)) {
         apparatusEvents.push({
@@ -9,3 +9,10 @@ export default function apparatusToEvent(apparatus, apparatusEvents) {
         })
     }
 }
+
+export const objectToAddressString = address => {
+        return [
+            address.address_line1,
+            address.city + ', ' + address.state,
+        ]
+    }

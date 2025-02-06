@@ -19,7 +19,7 @@ export default function EventSummary(props) {
             Event opened on {description.event_opened} and closed on {description.event_closed}<br/>
             Comments:<br/> {description.comments}<br/><br/>
             <h3>Fire Department Information:</h3>
-            {fireDepartment.name} ({fireDepartment.state}), shift {fireDepartment.shift}
+            {fireDepartment.name} ({fireDepartment.state}), shift {fireDepartment.shift}<br/><br/>
         </div>
     )
 }
