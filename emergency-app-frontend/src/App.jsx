@@ -1,42 +1,33 @@
 import './App.css'
 import React, { useEffect, useState } from 'react';
 import Map from "./components/Map.jsx"
-import apparatusToEvent from "./Apparatus.jsx"
-import { getNearbyStation, getWeather } from "./apiRequests.js"
+import { apparatusToEvent, objectToAddressString } from "./objectTransformers.jsx"
+import { getNearbyStation, getWeather } from "./weatherApiClient.js"
 import WeatherReport from "./components/WeatherReport.jsx"
 import EventSummary from "./components/EventSummary.jsx"
 
 function App() {
     const [selectedFile, setSelectedFile] = useState(null)
     const [uploadedData, setUploadedData] = useState(null)
-    const [location, setLocation] = useState(null)
+    const [incidentLocation, setIncidentLocation] = useState(null)
     const [locationList, setLocationList] = useState([])
     const [stationId, setStationId] = useState(null)
     const [weatherData, setWeatherData] = useState(null)
     const [fetchingWeatherData, setFetchingWeatherData] = useState(null)
     const [eventDatetime, setEventDatetime] = useState(null)
 
-    const addressStringify = address => {
-        return [
-            address.address_line1,
-            address.city + ', ' + address.state,
-        ]
-    }
-
     const onFileChange = (event) => {
         setSelectedFile(event.target.files[0])
     }
 
+    // Load uploaded file and parse JSON
     const readJsonFile = async (file) => {
         const fileText = await file.text()
-        return JSON.parse(fileText)
+        const jsonIncidentData = JSON.parse(fileText)
+        setUploadedData(jsonIncidentData)
     }
 
-    const parseJsonFile = async (file) => {
-        const incidentData = await readJsonFile(file)
-        setUploadedData(incidentData)
-    }
-
+    // Use event datetime to request relevant weather data
     useEffect(() => {
         if (stationId && uploadedData?.description?.event_opened) {
             const eventOpened = uploadedData.description.event_opened
@@ -48,27 +39,31 @@ function App() {
         }
     }, [stationId, uploadedData]);
 
+    // Transform incident info and apparatus status updates into lat/long events we can place on the map
     useEffect(() => {
-        if (location) {
-            const apparatusEvents = []
+        if (incidentLocation) {
+            const latLongEvents = []
             for (const apparatus of uploadedData.apparatus) {
-                apparatusToEvent(apparatus, apparatusEvents)
+                apparatusToEvent(apparatus, latLongEvents)
             }
-            apparatusEvents.push(location)
+            latLongEvents.push(incidentLocation)
 
-            setLocationList(apparatusEvents)
+            setLocationList(latLongEvents)
         }
-    }, [location, uploadedData]);
+    }, [incidentLocation, uploadedData]);
 
+    // Parse incident location and find nearest weather station
     useEffect(() => {
         if (uploadedData?.address?.latitude && uploadedData?.address?.longitude) {
             const address = uploadedData.address
-            setLocation({
+            setIncidentLocation({
                 latitude: address.latitude,
                 longitude: address.longitude,
                 title: address.common_place_name,
-                text: addressStringify(address)
+                text: objectToAddressString(address)
             })
+
+            // API request to find station nearest to this incident's lat/long
             getNearbyStation(address.latitude, address.longitude, setStationId, setFetchingWeatherData)
         }
     }, [uploadedData]);
@@ -76,7 +71,7 @@ function App() {
     useEffect(() => {
         // Parse file if one is uploaded
         if (selectedFile) {
-            parseJsonFile(selectedFile)
+            readJsonFile(selectedFile)
         }
     }, [selectedFile]);
 
@@ -89,6 +84,7 @@ function App() {
             return <div>Loading weather data...</div>
         }
 
+        // Render weather data since we know it has been fetched successfully
         return (
             <WeatherReport date={eventDatetime.toDateString()} time={eventDatetime.toTimeString()} temperature={weatherData[uploadedData.description.hour_of_day].temp}/>
         )
